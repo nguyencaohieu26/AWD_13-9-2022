@@ -1,0 +1,13 @@
+﻿@using WAD_NguyenCaoHieu.Models
+
+@{
+    Product product = ViewBag.product;
+}
+<div>
+    <h4>Detail for @product.Name</h4>
+    <hr/>
+    <p>Product name: @product.Name</p>
+    <p>Product price: @product.Price</p>
+    <p>Product quantity: @product.Quantity</p>
+    <p>Product release date: @product.ReleaseDate</p>
+</div>

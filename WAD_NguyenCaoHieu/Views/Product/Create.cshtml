@@ -1,0 +1,81 @@
+﻿@using WAD_NguyenCaoHieu.Models
+
+
+@{
+    List<Category>categories = ViewBag.categories;
+    Product product = ViewBag.productGet;
+}
+
+<div class="mt-4">
+    @using (Html.BeginForm("Create", "Product",FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div>
+            <label>Product name: </label>
+            @if(product.ProductId != 0)
+            {
+                <input class="form-control" name="Name" value=@product.Name required="required"/>
+                <p class="text-danger" name="Name"></p>
+                <input type="hidden" name="ProductId" value=@product.ProductId />
+            }
+            else
+            {
+                <input class="form-control" name="Name" required="required"/>
+                <p class="text-danger" name="Name"></p>
+            }
+       
+        </div>
+        <div>
+            <label>Price: </label>
+            @if (product.ProductId != 0)
+            {
+                <input class="form-control" name="Price" value=@product.Price required="required"/>
+                <p class="text-danger" name="Price"></p>
+            }
+            else
+            {
+                <input class="form-control" name="Price" required="required"/>
+                <p class="text-danger" name="Price"></p>
+            }
+            
+        </div>
+        <div>
+            <label>Quantity: </label>
+            @if (product.ProductId != 0)
+            {
+                <input class="form-control" name="Quantity" value=@product.Quantity required="required"/>
+                <p class="text-danger" name="Quantity"></p>
+            }
+            else
+            {
+                <input class="form-control" name="Quantity" required="required"/>
+                <p class="text-danger" name="Quantity"></p>
+            }
+            
+        </div> 
+        <div>
+            <label>CategoryId: </label>
+            <select name="CategoryId" class="custom-select">
+                @if (product.ProductId != 0)
+                {
+                    foreach (var item in categories)
+                    {
+                        <option value=@item.CategoryId if(@item.CategoryId == @product.CategoryId) selected>@item.CategoryName</option>
+                    }
+              
+                }
+                else
+                {
+                    foreach (var item in categories)
+                    {
+                        <option value=@item.CategoryId>@item.CategoryName</option>
+                    }
+                }
+            </select>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    }
+</div>
