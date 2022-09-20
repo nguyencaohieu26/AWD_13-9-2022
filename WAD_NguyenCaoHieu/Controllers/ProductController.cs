@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Web.Mvc;
 using WAD_NguyenCaoHieu.Database;
 using WAD_NguyenCaoHieu.Models;
@@ -21,48 +23,45 @@ namespace WAD_NguyenCaoHieu.Controllers
         }
 
         [HttpPost]
-        public ActionResult SearchProduct(string name,DateTime? date,string categoryid )
+        public ActionResult SearchProduct(string name,DateTime? date,string categoryid,string isClear)
         {
-            Console.WriteLine(name);
-            Console.WriteLine(date);
-            Console.WriteLine(categoryid);
-            if (name == null && date == null && categoryid == null)
+            Console.WriteLine("Run: "+name);
+            Console.WriteLine("Run: "+date);
+            Console.WriteLine("Run: "+categoryid);
+            var productsReturn = new List<Product>();
+            if (isClear.Length > 0)
             {
-                Console.WriteLine("run");
-                var products = _dbContext.Products.Include(p => p.categories).ToList();
-                return PartialView("_ProductPartialView", products);
+                return PartialView("_ProductPartialView", _dbContext.Products.Include(p => p.categories).ToList());
             }
-            // var productsReturn = new List<Product>();
-            // foreach (var product in _dbContext.Products.Include(p => p.categories).ToList())
-            // {
-            //     if (name != null && date != null && categoryid != null)
-            //     {
-            //         if (name == product.Name && product.CategoryId == Int16.Parse(categoryid) &&
-            //             product.ReleaseDate.ToString("dd/MM/yyyy HH:mm:ss") == date.ToString())
-            //         {
-            //             productsReturn.Add(product);
-            //         }
-            //     }
-            //
-            //     if (name != null && date == null && categoryid == null)
-            //     {
-            //         productsReturn.Add(product);
-            //     }
-            //
-            //     if (date != null && name == null && categoryid == null)
-            //     {
-            //         productsReturn.Add(product);
-            //     }
-            //
-            //     if (categoryid != null && name == null && date == null)
-            //     {
-            //         productsReturn.Add(product);
-            //     }
-            // }
-            //
-            return null;
+            foreach (var product in _dbContext.Products.Include(p => p.categories).ToList())
+            {
+                if (name.Length > 0 && date.ToString().Length > 0 && categoryid.Length > 0)
+                {
+                    if (name == product.Name && product.CategoryId == Int16.Parse(categoryid) &&
+                        product.ReleaseDate.ToString("dd/MM/yyyy HH:mm:ss") == date.ToString())
+                        productsReturn.Add(product);
+                    
+                }
+            
+                if ((name.Length > 0 && date.ToString().Length == 0 && categoryid.Length == 0) && product.Name.Contains(name))
+                {
+                        productsReturn.Add(product);
+                }
+            
+                if ((date.ToString().Length > 0 && name.Length == 0 && categoryid.Length == 0) && (product.ReleaseDate.ToString("d", new CultureInfo("en-US")).Contains(date.ToString().Substring(0,9))))
+                {
+                        productsReturn.Add(product);
+                }
+            
+                if ((categoryid.Length > 0 && name.Length == 0 && date.ToString().Length == 0) && (Int16.Parse(categoryid) == product.CategoryId))
+                {
+                        productsReturn.Add(product);
+                }
+            }
+
+            return PartialView("_ProductPartialView", productsReturn);
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Name,Price,Quantity,CategoryId")] Product @product)
