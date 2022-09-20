@@ -1,4 +1,3 @@
-C:\Users\hieunguyen\RiderProjects\WAD_NguyenCaoHieu\WAD_NguyenCaoHieu\bin\WAD_NguyenCaoHieu.dll.config
 C:\Users\hieunguyen\RiderProjects\WAD_NguyenCaoHieu\WAD_NguyenCaoHieu\bin\WAD_NguyenCaoHieu.dll
 C:\Users\hieunguyen\RiderProjects\WAD_NguyenCaoHieu\WAD_NguyenCaoHieu\bin\WAD_NguyenCaoHieu.pdb
 C:\Users\hieunguyen\RiderProjects\WAD_NguyenCaoHieu\WAD_NguyenCaoHieu\bin\roslyn\csc.exe

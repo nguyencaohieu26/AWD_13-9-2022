@@ -1,57 +1,58 @@
-﻿@model IEnumerable<WAD_NguyenCaoHieu.Models.Product>
+﻿@using WAD_NguyenCaoHieu.Models
+@model IEnumerable<WAD_NguyenCaoHieu.Models.Product>
 
 @{
     ViewBag.Title = "List Products";
+    List<Category>categories = ViewBag.categories;
 }
-
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "ProductForm")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.categories.CategoryName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Price)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Quantity)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ReleaseDate)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.categories.CategoryName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReleaseDate)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "ProductForm", new { productId=item.ProductId, }) |
-                @Html.ActionLink("Details", "GetDetail", new { productId=item.ProductId }) |
-                @Html.ActionLink("Delete", "Delete", new { productId=item.ProductId })
-            </td>
-        </tr>
+<script type="text/javascript">
+    function fnSuccess(data) {
+        console.log(data);
+        alert("Booo..Success..");
+        $("#ajax-loader").hide();
     }
 
-</table>
+    function fnError(error) {
+        console.log(error)
+        alert("Booo..Failed..");
+    }
+</script>
+<div class="d-flex justify-content-between align-items-center mt-5">
+    <h2 class="mb-0">List Products</h2>
+    @Html.ActionLink("Create New", "ProductForm",new { area = "" },new {@class="text-decoration-none"})
+</div>
+<div>
+    @using (Ajax.BeginForm("SearchProduct", "Product",new {}, new AjaxOptions
+    {
+        HttpMethod = "POST",
+        OnFailure = "fnError",
+        OnSuccess = "fnSuccess",
+        Confirm = "Are u sure want to Get data search?",
+        UpdateTargetId = "table-update"
+    },new {@class="d-flex"}))
+    {
+        <div>
+            <input type="date" name="date" class="form-control"/>
+        </div>
+        <div class="mx-4 mb-3">
+            <input type="text" name="name" class="form-control" placeholder="search for name.."/>
+        </div>
+        <div>
+            <select class="form-control" name="categoryid">
+                <option value="">Choose Category</option>
+                @foreach (var item in categories)
+                {
+                    <option value=@item.CategoryId>@item.CategoryName</option>
+                }
+            </select>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary btn-sm mx-4">Search</button>
+            <button type="button" class="btn btn-outline-danger btn-sm text-black-50">Clear</button>
+        </div>
+    }
+    
+</div>
+<div id="table-update">
+    @Html.Partial("_ProductPartialView", Model)    
+</div>

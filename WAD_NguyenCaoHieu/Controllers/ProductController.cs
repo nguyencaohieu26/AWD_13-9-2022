@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -15,9 +16,53 @@ namespace WAD_NguyenCaoHieu.Controllers
         public ActionResult Index()
         {
             var products = _dbContext.Products.Include(p => p.categories).ToList();
+            ViewBag.Categories = _dbContext.Categories.ToList();
             return View(products);
         }
 
+        [HttpPost]
+        public ActionResult SearchProduct(string name,DateTime? date,string categoryid )
+        {
+            Console.WriteLine(name);
+            Console.WriteLine(date);
+            Console.WriteLine(categoryid);
+            if (name == null && date == null && categoryid == null)
+            {
+                Console.WriteLine("run");
+                var products = _dbContext.Products.Include(p => p.categories).ToList();
+                return PartialView("_ProductPartialView", products);
+            }
+            // var productsReturn = new List<Product>();
+            // foreach (var product in _dbContext.Products.Include(p => p.categories).ToList())
+            // {
+            //     if (name != null && date != null && categoryid != null)
+            //     {
+            //         if (name == product.Name && product.CategoryId == Int16.Parse(categoryid) &&
+            //             product.ReleaseDate.ToString("dd/MM/yyyy HH:mm:ss") == date.ToString())
+            //         {
+            //             productsReturn.Add(product);
+            //         }
+            //     }
+            //
+            //     if (name != null && date == null && categoryid == null)
+            //     {
+            //         productsReturn.Add(product);
+            //     }
+            //
+            //     if (date != null && name == null && categoryid == null)
+            //     {
+            //         productsReturn.Add(product);
+            //     }
+            //
+            //     if (categoryid != null && name == null && date == null)
+            //     {
+            //         productsReturn.Add(product);
+            //     }
+            // }
+            //
+            return null;
+        }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Name,Price,Quantity,CategoryId")] Product @product)
