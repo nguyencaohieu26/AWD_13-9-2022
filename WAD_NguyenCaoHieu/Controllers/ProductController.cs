@@ -13,6 +13,7 @@ namespace WAD_NguyenCaoHieu.Controllers
 {
     public class ProductController : Controller
     {
+        const  string DateFormatFull = "dd/MM/yyyy HH:mm:ss";
         private DatabaseContext _dbContext = new DatabaseContext();
         // GET
         public ActionResult Index()
@@ -35,14 +36,15 @@ namespace WAD_NguyenCaoHieu.Controllers
             }
             foreach (var product in _dbContext.Products.Include(p => p.categories).ToList())
             {
+                //full filter criteria
                 if (name.Length > 0 && date.ToString().Length > 0 && categoryid.Length > 0)
                 {
                     if (name == product.Name && product.CategoryId == Int16.Parse(categoryid) &&
-                        product.ReleaseDate.ToString("dd/MM/yyyy HH:mm:ss") == date.ToString())
+                        product.ReleaseDate.ToString(DateFormatFull) == date.ToString())
                         productsReturn.Add(product);
                     
                 }
-            
+                //1 criteria exist
                 if ((name.Length > 0 && date.ToString().Length == 0 && categoryid.Length == 0) && product.Name.Contains(name))
                 {
                         productsReturn.Add(product);
@@ -57,6 +59,28 @@ namespace WAD_NguyenCaoHieu.Controllers
                 {
                         productsReturn.Add(product);
                 }
+                //2 criteria exist
+                if ((name.Length > 0 && date.ToString().Length > 0 && categoryid.Length == 0) 
+                    && product.Name.Contains(name) 
+                    && product.ReleaseDate.ToString("d", new CultureInfo("en-US")).Contains(date.ToString().Substring(0,9)))
+                {
+                    productsReturn.Add(product);
+                }
+                if ((name.Length > 0 && date.ToString().Length == 0 && categoryid.Length > 0) 
+                    && product.Name.Contains(name) 
+                    && Int16.Parse(categoryid) == product.CategoryId)
+                {
+                    productsReturn.Add(product);
+                }
+                
+                if ((name.Length == 0 && date.ToString().Length > 0 && categoryid.Length > 0)
+                    && Int16.Parse(categoryid) == product.CategoryId
+                    && product.ReleaseDate.ToString("d", new CultureInfo("en-US")).Contains(date.ToString().Substring(0,9)))
+                {
+                    productsReturn.Add(product);
+                }
+               
+                
             }
 
             return PartialView("_ProductPartialView", productsReturn);
